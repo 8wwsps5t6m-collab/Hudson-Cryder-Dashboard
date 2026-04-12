@@ -1,16 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { computePerformanceScore } from "@/lib/metrics";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import { videoUpsertSchema } from "@/lib/videos/validation";
 
 export type VideoActionState = {
   error?: string;
+  success?: boolean;
 };
 
-// Validates form data, inserts or updates a row, recomputes performance_score, redirects home.
+// Validates form data, inserts or updates a row, recomputes performance_score.
 
 export async function upsertVideoAction(
   _prev: VideoActionState,
@@ -25,6 +25,8 @@ export async function upsertVideoAction(
     likes: formData.get("likes"),
     comments: formData.get("comments"),
     shares: formData.get("shares"),
+    saves: formData.get("saves"),
+    hook_type: formData.get("hook_type"),
     hook_text: formData.get("hook_text"),
     format_type: formData.get("format_type"),
     date_posted: formData.get("date_posted"),
@@ -47,6 +49,7 @@ export async function upsertVideoAction(
     v.likes,
     v.comments,
     v.shares,
+    v.saves,
   );
 
   const payload = {
@@ -55,6 +58,8 @@ export async function upsertVideoAction(
     likes: v.likes,
     comments: v.comments,
     shares: v.shares,
+    saves: v.saves,
+    hook_type: v.hook_type,
     hook_text: v.hook_text,
     format_type: v.format_type,
     date_posted: datePosted.toISOString(),
@@ -82,7 +87,7 @@ export async function upsertVideoAction(
 
   revalidatePath("/videos");
   revalidatePath("/analytics");
-  redirect("/videos");
+  return { success: true };
 }
 
 // Deletes one row by hidden id field.

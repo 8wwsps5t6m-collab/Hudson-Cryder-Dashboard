@@ -13,7 +13,8 @@ function SubmitSnapshot() {
 
 export function SnapshotForm() {
   const initial: SnapshotActionState = {};
-  const [state, formAction] = useFormState(upsertSnapshotAction, initial);
+  const [rawState, formAction] = useFormState(upsertSnapshotAction, initial);
+  const state = rawState ?? initial;
   const today = new Date().toISOString().slice(0, 10);
 
   return (

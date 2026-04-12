@@ -23,6 +23,12 @@ export function normalizeVideoRow(row: Record<string, unknown>): VideoRow {
     likes: coerceNumber(row.likes),
     comments: coerceNumber(row.comments),
     shares: coerceNumber(row.shares),
+    saves:
+      row.saves === null || row.saves === undefined ? 0 : coerceNumber(row.saves),
+    hook_type:
+      row.hook_type === null || row.hook_type === undefined
+        ? "both"
+        : String(row.hook_type),
     hook_text:
       row.hook_text === null || row.hook_text === undefined
         ? null
@@ -134,7 +140,7 @@ export function statsByFormat(videos: VideoRow[]): FormatStat[] {
     g.viewsSum += v.views;
     const eng =
       v.views > 0
-        ? (v.likes + v.comments + v.shares) / v.views
+        ? (v.likes + v.comments + v.shares + v.saves) / v.views
         : 0;
     g.engagementSum += eng;
     groups.set(v.format_type, g);

@@ -2,18 +2,19 @@
 
 export type PerformanceBand = "above" | "typical" | "below";
 
-/** Interactions per view; never divides by zero. */
+/** Interactions per view; includes saves with shares; never divides by zero. */
 export function engagementRate(
   likes: number,
   comments: number,
   shares: number,
+  saves: number,
   views: number,
 ): number {
   const v = Math.max(views, 0);
   if (v === 0) {
     return 0;
   }
-  return (likes + comments + shares) / v;
+  return (likes + comments + shares + saves) / v;
 }
 
 /**
@@ -25,8 +26,9 @@ export function computePerformanceScore(
   likes: number,
   comments: number,
   shares: number,
+  saves: number,
 ): number {
-  const engagement = engagementRate(likes, comments, shares, views);
+  const engagement = engagementRate(likes, comments, shares, saves, views);
   const reach = Math.log10(Math.max(views, 0) + 1) * 40;
   const interactionBoost = engagement * 800;
   return Math.round((reach + interactionBoost) * 100) / 100;

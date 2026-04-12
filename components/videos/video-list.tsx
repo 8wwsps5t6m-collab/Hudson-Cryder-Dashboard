@@ -27,12 +27,14 @@ export function VideoList({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-zinc-800">
-      <table className="w-full min-w-[640px] text-left text-sm">
+      <table className="w-full min-w-[880px] text-left text-sm">
         <thead className="border-b border-zinc-800 bg-zinc-950/80 text-xs uppercase tracking-wide text-zinc-500">
           <tr>
             <th className="px-3 py-2 font-medium">Posted</th>
             <th className="px-3 py-2 font-medium">Format</th>
             <th className="px-3 py-2 font-medium text-right">Views</th>
+            <th className="px-3 py-2 font-medium text-right">Shares</th>
+            <th className="px-3 py-2 font-medium text-right">Saves</th>
             <th className="px-3 py-2 font-medium text-right">Eng.</th>
             <th className="px-3 py-2 font-medium">Hook</th>
             <th className="px-3 py-2 font-medium text-right">Actions</th>
@@ -42,7 +44,10 @@ export function VideoList({
           {videos.map((v) => {
             const eng =
               v.views > 0
-                ? ((v.likes + v.comments + v.shares) / v.views).toFixed(3)
+                ? (
+                    (v.likes + v.comments + v.shares + v.saves) /
+                    v.views
+                  ).toFixed(3)
                 : "—";
             const band = performanceBandForViews(v.views, baselineMedian);
             const rowClass = bandStyleClass(band);
@@ -63,6 +68,12 @@ export function VideoList({
                 </td>
                 <td className="px-3 py-2 text-right tabular-nums text-zinc-200">
                   {v.views.toLocaleString()}
+                </td>
+                <td className="px-3 py-2 text-right tabular-nums text-zinc-300">
+                  {v.shares.toLocaleString()}
+                </td>
+                <td className="px-3 py-2 text-right tabular-nums text-zinc-300">
+                  {v.saves.toLocaleString()}
                 </td>
                 <td className="px-3 py-2 text-right tabular-nums text-zinc-400">
                   {eng}
@@ -95,8 +106,8 @@ export function VideoList({
         </tbody>
       </table>
       <p className="border-t border-zinc-800 px-3 py-2 text-[10px] text-zinc-600">
-        Row tint: vs median views in this table — green above, yellow typical, red
-        below (quick read, not science).
+        Eng. = (likes + comments + shares + saves) ÷ views. Row tint vs median
+        views — green above, yellow typical, red below.
       </p>
     </div>
   );

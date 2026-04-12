@@ -11,6 +11,11 @@ create table if not exists public.videos (
   likes bigint not null default 0,
   comments bigint not null default 0,
   shares bigint not null default 0,
+  saves bigint not null default 0,
+  hook_type text not null default 'both'
+    constraint videos_hook_type_check check (
+      hook_type in ('visual', 'verbal', 'both')
+    ),
   hook_text text,
   format_type text not null default 'other'
     constraint videos_format_type_check check (

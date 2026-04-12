@@ -42,7 +42,7 @@ export function buildWhatsWorkingLines(
   const byEng = [...eligible].sort((a, b) => b.avgEngagement - a.avgEngagement);
   if (byEng[0] && byEng[0].avgEngagement > 0 && eligible.length >= 2) {
     lines.push(
-      `${label(byEng[0].format_type)} leads on engagement rate (reactions per view) among formats with enough posts.`,
+      `${label(byEng[0].format_type)} leads on engagement rate (likes + comments + shares + saves, per view) among formats with enough posts.`,
     );
   }
 

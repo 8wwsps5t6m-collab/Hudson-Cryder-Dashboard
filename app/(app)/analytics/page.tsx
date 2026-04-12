@@ -128,7 +128,8 @@ export default async function AnalyticsPage({
             Avg engagement by format
           </h2>
           <p className="mt-1 text-xs text-zinc-500">
-            (likes + comments + shares) ÷ views per post, averaged by format.
+            (likes + comments + shares + saves) ÷ views per post, averaged by
+            format.
           </p>
           <div className="mt-4">
             <FormatEngagementChart stats={formatStats} />

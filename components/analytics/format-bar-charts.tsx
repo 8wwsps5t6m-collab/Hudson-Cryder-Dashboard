@@ -101,7 +101,7 @@ export function FormatEngagementChart({ stats }: { stats: FormatStat[] }) {
           />
           <Bar
             dataKey="engagement"
-            name="Eng. rate"
+            name="Eng. (incl. saves)"
             fill="#71717a"
             radius={[0, 4, 4, 0]}
           />
