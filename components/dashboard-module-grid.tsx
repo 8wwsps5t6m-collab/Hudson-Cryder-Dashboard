@@ -1,29 +1,34 @@
 import Link from "next/link";
 import { dashboardModules } from "@/lib/dashboard-modules";
 
-// Renders roadmap cards linking into stub routes; keeps the dashboard scannable on mobile.
+// Full-card links so every pixel of each box navigates to the matching route.
 
 export function DashboardModuleGrid() {
   return (
-    <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+    <ul className="dashboard-module-grid mt-8 grid list-none gap-4 p-0 sm:grid-cols-2">
       {dashboardModules.map((module) => (
-        <li key={module.href}>
-          <Link
-            href={module.href}
-            className="block rounded-lg border border-zinc-800 bg-zinc-950/40 p-4 transition-colors hover:border-zinc-700 hover:bg-zinc-900/40"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h2 className="text-sm font-semibold text-zinc-100">
-                {module.title}
-              </h2>
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-zinc-500">
-                {module.phaseLabel}
-              </span>
+        <li key={module.href} className="relative min-h-[132px]">
+          <div className="surface-card surface-card-hover relative min-h-[132px] overflow-hidden rounded-xl">
+            <Link
+              href={module.href}
+              prefetch
+              className="absolute inset-0 z-10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              aria-label={`Open ${module.title}`}
+            />
+            <div className="relative z-0 flex min-h-[132px] flex-col p-4">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-lg font-semibold text-zinc-100">
+                  {module.title}
+                </span>
+                <span className="pointer-events-none shrink-0 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-200">
+                  {module.phaseLabel}
+                </span>
+              </div>
+              <p className="pointer-events-none mt-2 flex-1 text-sm leading-relaxed text-zinc-400">
+                {module.description}
+              </p>
             </div>
-            <p className="mt-2 text-xs leading-relaxed text-zinc-400">
-              {module.description}
-            </p>
-          </Link>
+          </div>
         </li>
       ))}
     </ul>

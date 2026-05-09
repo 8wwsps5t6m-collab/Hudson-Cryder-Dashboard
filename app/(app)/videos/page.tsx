@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { VideoForm } from "@/components/videos/video-form";
 import { VideoList, videoListBaseline } from "@/components/videos/video-list";
+import { describeFetchFailure } from "@/lib/supabase/errors";
 import { fetchAllVideos } from "@/lib/videos-queries";
 import type { VideoRow } from "@/lib/videos/types";
 
@@ -8,12 +9,22 @@ export const metadata: Metadata = {
   title: "Videos",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function VideosPage({
   searchParams,
 }: {
   searchParams: { edit?: string };
 }) {
-  const videos = await fetchAllVideos();
+  let videos: VideoRow[] = [];
+  let loadError = "";
+
+  try {
+    videos = await fetchAllVideos();
+  } catch (error) {
+    loadError = describeFetchFailure(error);
+  }
+
   const editId = searchParams.edit;
   const editing: VideoRow | undefined = editId
     ? videos.find((v) => v.id === editId)
@@ -32,6 +43,12 @@ export default async function VideosPage({
           future AI features.
         </p>
       </div>
+
+      {loadError ? (
+        <p className="rounded-md border border-red-900/70 bg-red-950/30 p-3 text-sm text-red-300">
+          Could not load existing videos yet: {loadError}
+        </p>
+      ) : null}
 
       <section aria-labelledby="video-form-heading">
         <h2 id="video-form-heading" className="sr-only">

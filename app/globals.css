@@ -1,3 +1,4 @@
+/* Tailwind CSS v3 — order matters: base → components → utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,11 +13,40 @@ html.dark {
   color-scheme: dark;
   --background: #0a0a0a;
   --foreground: #ededed;
+  --accent: #6366f1;
 }
 
 body {
   color: var(--foreground);
   background-color: var(--background);
+}
+
+@layer base {
+  h1 {
+    @apply text-3xl font-bold tracking-tight text-zinc-50 sm:text-4xl;
+  }
+
+  h2 {
+    @apply text-xl font-semibold tracking-tight text-zinc-100;
+  }
+
+  nav[aria-label="Main navigation"] ul {
+    @apply list-none p-0;
+  }
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-xl border border-zinc-800/80 bg-zinc-950/55 backdrop-blur-sm;
+  }
+
+  .surface-card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-500/60 hover:shadow-[0_0_0_1px_rgba(99,102,241,0.18),0_18px_40px_-24px_rgba(99,102,241,0.75)];
+  }
+
+  .accent-button {
+    @apply rounded-md bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60;
+  }
 }
 
 @layer utilities {

@@ -11,6 +11,7 @@ import { TopVideosCard } from "@/components/analytics/top-videos-card";
 import { ViewsOverTimeChart } from "@/components/analytics/views-over-time-chart";
 import { WhatsWorkingPanel } from "@/components/analytics/whats-working-panel";
 import { buildWhatsWorkingLines } from "@/lib/whats-working";
+import { describeFetchFailure } from "@/lib/supabase/errors";
 import {
   bucketViewsOverTime,
   fetchAllVideos,
@@ -24,6 +25,8 @@ import {
 export const metadata: Metadata = {
   title: "Analytics",
 };
+
+export const dynamic = "force-dynamic";
 
 const RANGE_KEYS: AnalyticsRange[] = ["month", "30d", "90d", "all"];
 
@@ -41,10 +44,18 @@ export default async function AnalyticsPage({
 }) {
   const range = parseRange(searchParams.range);
 
-  const [all, snapshots] = await Promise.all([
-    fetchAllVideos(),
-    fetchAnalyticsSnapshots(),
-  ]);
+  let all = [] as Awaited<ReturnType<typeof fetchAllVideos>>;
+  let snapshots = [] as Awaited<ReturnType<typeof fetchAnalyticsSnapshots>>;
+  let loadError = "";
+
+  try {
+    [all, snapshots] = await Promise.all([
+      fetchAllVideos(),
+      fetchAnalyticsSnapshots(),
+    ]);
+  } catch (error) {
+    loadError = describeFetchFailure(error);
+  }
 
   const filtered = filterVideosByRange(all, range);
   const monthVideos = filterVideosByRange(all, "month");
@@ -70,6 +81,12 @@ export default async function AnalyticsPage({
         </div>
         <RangeTabs active={range} />
       </div>
+
+      {loadError ? (
+        <p className="rounded-md border border-red-900/70 bg-red-950/30 p-3 text-sm text-red-300">
+          Could not load analytics yet: {loadError}
+        </p>
+      ) : null}
 
       {all.length === 0 ? (
         <div className="rounded-lg border border-dashed border-zinc-700 p-8 text-center">
