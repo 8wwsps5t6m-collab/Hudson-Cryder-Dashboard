@@ -16,6 +16,10 @@ export type VideoRow = {
   format_type: FormatType | string;
   date_posted: string;
   performance_score: number | null;
+  engagement_rate: number | null;
+  save_rate: number | null;
+  comment_rate: number | null;
+  share_rate: number | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

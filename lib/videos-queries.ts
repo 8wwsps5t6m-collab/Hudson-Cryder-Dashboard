@@ -39,6 +39,22 @@ export function normalizeVideoRow(row: Record<string, unknown>): VideoRow {
       row.performance_score === null || row.performance_score === undefined
         ? null
         : coerceNumber(row.performance_score),
+    engagement_rate:
+      row.engagement_rate === null || row.engagement_rate === undefined
+        ? null
+        : coerceNumber(row.engagement_rate),
+    save_rate:
+      row.save_rate === null || row.save_rate === undefined
+        ? null
+        : coerceNumber(row.save_rate),
+    comment_rate:
+      row.comment_rate === null || row.comment_rate === undefined
+        ? null
+        : coerceNumber(row.comment_rate),
+    share_rate:
+      row.share_rate === null || row.share_rate === undefined
+        ? null
+        : coerceNumber(row.share_rate),
     notes:
       row.notes === null || row.notes === undefined ? null : String(row.notes),
     created_at: String(row.created_at),
