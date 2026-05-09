@@ -14,7 +14,7 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 /** Apify can take several minutes for profile scrapes; extend on Vercel if needed. */
 export const maxDuration = 300;
 
-const DEFAULT_PROFILE = "hudson_cryder";
+const DEFAULT_PROFILE = "hudson.cryder";
 
 /** Normalize TikTok video URLs for stable deduplication. */
 function canonicalVideoUrl(raw: string): string {

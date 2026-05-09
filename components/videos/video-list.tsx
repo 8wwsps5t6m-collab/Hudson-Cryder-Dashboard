@@ -2,6 +2,7 @@ import Link from "next/link";
 import { deleteVideoAction } from "@/app/(app)/videos/actions";
 import { formatTypeLabel, isFormatType } from "@/lib/format-types";
 import { bandStyleClass, median, performanceBandForViews } from "@/lib/metrics";
+import { engagementForVideo } from "@/lib/videos-queries";
 import type { VideoRow } from "@/lib/videos/types";
 
 function formatLabel(t: string): string {
@@ -43,11 +44,10 @@ export function VideoList({
         <tbody>
           {videos.map((v) => {
             const eng =
-              v.views > 0
-                ? (
-                    (v.likes + v.comments + v.shares + v.saves) /
-                    v.views
-                  ).toFixed(3)
+              v.views > 0 ||
+              (v.engagement_rate !== null &&
+                Number.isFinite(v.engagement_rate))
+                ? engagementForVideo(v).toFixed(3)
                 : "—";
             const band = performanceBandForViews(v.views, baselineMedian);
             const rowClass = bandStyleClass(band);

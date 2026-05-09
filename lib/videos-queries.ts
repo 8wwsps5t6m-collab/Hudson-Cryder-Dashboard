@@ -1,3 +1,5 @@
+import { FORMAT_TYPES } from "@/lib/format-types";
+import { HOOK_TYPES } from "@/lib/hook-types";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import type { VideoRow } from "@/lib/videos/types";
 
@@ -14,27 +16,74 @@ function coerceNumber(v: unknown): number {
   return 0;
 }
 
+/** Ensures DB check constraint values; null / blank → safe defaults for synced rows. */
+function normalizeFormatType(raw: unknown): string {
+  if (raw === null || raw === undefined || raw === "") {
+    return "other";
+  }
+  const s = String(raw).trim();
+  if (s === "null" || s === "undefined") {
+    return "other";
+  }
+  return (FORMAT_TYPES as readonly string[]).includes(s) ? s : "other";
+}
+
+function normalizeHookType(raw: unknown): string {
+  if (raw === null || raw === undefined || raw === "") {
+    return "both";
+  }
+  const s = String(raw).trim();
+  if (s === "null" || s === "undefined") {
+    return "both";
+  }
+  return (HOOK_TYPES as readonly string[]).includes(s) ? s : "both";
+}
+
+/** Stable ISO string for sorting/filtering; invalid or missing → epoch (included in “all”). */
+function normalizeDatePosted(raw: unknown): string {
+  if (raw === null || raw === undefined || raw === "") {
+    return new Date(0).toISOString();
+  }
+  const t = new Date(String(raw)).getTime();
+  if (Number.isNaN(t)) {
+    return new Date(0).toISOString();
+  }
+  return new Date(t).toISOString();
+}
+
+/** Prefer TikTok-synced engagement_rate when present; else derive from counts. */
+export function engagementForVideo(v: VideoRow): number {
+  if (
+    v.engagement_rate !== null &&
+    v.engagement_rate !== undefined &&
+    Number.isFinite(v.engagement_rate)
+  ) {
+    return v.engagement_rate;
+  }
+  if (v.views <= 0) {
+    return 0;
+  }
+  return (v.likes + v.comments + v.shares + v.saves) / v.views;
+}
+
 /** Normalizes Supabase row (bigint may arrive as string). */
 export function normalizeVideoRow(row: Record<string, unknown>): VideoRow {
   return {
     id: String(row.id),
-    url: String(row.url),
+    url: String(row.url ?? ""),
     views: coerceNumber(row.views),
     likes: coerceNumber(row.likes),
     comments: coerceNumber(row.comments),
     shares: coerceNumber(row.shares),
     saves:
       row.saves === null || row.saves === undefined ? 0 : coerceNumber(row.saves),
-    hook_type:
-      row.hook_type === null || row.hook_type === undefined
-        ? "both"
-        : String(row.hook_type),
+    hook_type: normalizeHookType(row.hook_type),
     hook_text:
       row.hook_text === null || row.hook_text === undefined
         ? null
         : String(row.hook_text),
-    format_type: String(row.format_type),
-    date_posted: String(row.date_posted),
+    format_type: normalizeFormatType(row.format_type),
+    date_posted: normalizeDatePosted(row.date_posted),
     performance_score:
       row.performance_score === null || row.performance_score === undefined
         ? null
@@ -62,13 +111,14 @@ export function normalizeVideoRow(row: Record<string, unknown>): VideoRow {
   };
 }
 
-/** Fetches all videos newest first (filter in memory for small creator datasets). */
+/** Fetches all videos newest first (no hook/format filters — includes Apify-synced rows). */
 export async function fetchAllVideos(): Promise<VideoRow[]> {
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("videos")
     .select("*")
-    .order("date_posted", { ascending: false });
+    .order("date_posted", { ascending: false })
+    .limit(10_000);
 
   if (error) {
     throw new Error(error.message);
@@ -154,11 +204,7 @@ export function statsByFormat(videos: VideoRow[]): FormatStat[] {
     };
     g.count += 1;
     g.viewsSum += v.views;
-    const eng =
-      v.views > 0
-        ? (v.likes + v.comments + v.shares + v.saves) / v.views
-        : 0;
-    g.engagementSum += eng;
+    g.engagementSum += engagementForVideo(v);
     groups.set(v.format_type, g);
   }
   return Array.from(groups.entries()).map(([format_type, g]) => ({

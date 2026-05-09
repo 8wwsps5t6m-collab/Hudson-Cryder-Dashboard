@@ -34,7 +34,8 @@ function parseRange(value: string | undefined): AnalyticsRange {
   if (value && RANGE_KEYS.includes(value as AnalyticsRange)) {
     return value as AnalyticsRange;
   }
-  return "month";
+  /** Default “all” so imported/synced history is visible without excluding older posts. */
+  return "all";
 }
 
 export default async function AnalyticsPage({
@@ -74,8 +75,8 @@ export default async function AnalyticsPage({
             Analytics
           </h1>
           <p className="mt-2 max-w-xl text-sm text-zinc-400">
-            Performance from your manual video log. Range filters charts; the
-            “what&apos;s working” box always uses{" "}
+            Performance from your video library (manual entries and TikTok sync).
+            Range filters most charts; the “what&apos;s working” box always uses{" "}
             <strong className="font-medium text-zinc-300">this calendar month</strong>.
           </p>
         </div>
