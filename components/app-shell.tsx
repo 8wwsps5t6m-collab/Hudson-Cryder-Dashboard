@@ -18,6 +18,7 @@ const navIconNameByHref = {
   "/analytics": "BarChart3",
   "/videos": "Video",
   "/ideas": "Lightbulb",
+  "/hooks": "Anchor",
   "/trends": "Sparkles",
   "/analyze": "Compass",
   "/calendar": "CalendarDays",
