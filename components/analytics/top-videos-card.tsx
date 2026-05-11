@@ -6,7 +6,7 @@ function fmt(t: string): string {
   return isFormatType(t) ? formatTypeLabel[t] : t;
 }
 
-// Top N list with link to edit on Videos page.
+// Top N list with link to Videos library.
 
 export function TopVideosCard({
   videos,
@@ -39,10 +39,10 @@ export function TopVideosCard({
             ) : null}
           </div>
           <Link
-            href={`/videos?edit=${v.id}`}
+            href="/videos"
             className="shrink-0 text-xs text-zinc-400 underline underline-offset-2 hover:text-zinc-200"
           >
-            Edit
+            Videos
           </Link>
         </li>
       ))}

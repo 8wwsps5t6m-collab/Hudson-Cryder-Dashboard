@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { deleteVideoAction } from "@/app/(app)/videos/actions";
 import { formatTypeLabel, isFormatType } from "@/lib/format-types";
 import { bandStyleClass, median, performanceBandForViews } from "@/lib/metrics";
@@ -21,7 +20,7 @@ export function VideoList({
   if (videos.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-sm text-zinc-500">
-        No videos yet. Add your first post above.
+        No videos yet. Use Sync TikTok to pull your library from Apify.
       </p>
     );
   }
@@ -82,23 +81,15 @@ export function VideoList({
                   {v.hook_text || "—"}
                 </td>
                 <td className="px-3 py-2 text-right">
-                  <div className="flex justify-end gap-2">
-                    <Link
-                      href={`/videos?edit=${v.id}`}
-                      className="text-xs text-zinc-300 underline underline-offset-2 hover:text-white"
+                  <form action={deleteVideoAction} className="inline">
+                    <input type="hidden" name="id" value={v.id} />
+                    <button
+                      type="submit"
+                      className="text-xs text-red-400 hover:text-red-300"
                     >
-                      Edit
-                    </Link>
-                    <form action={deleteVideoAction}>
-                      <input type="hidden" name="id" value={v.id} />
-                      <button
-                        type="submit"
-                        className="text-xs text-red-400 hover:text-red-300"
-                      >
-                        Delete
-                      </button>
-                    </form>
-                  </div>
+                      Delete
+                    </button>
+                  </form>
                 </td>
               </tr>
             );

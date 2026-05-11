@@ -92,7 +92,7 @@ export default async function AnalyticsPage({
       {all.length === 0 ? (
         <div className="rounded-lg border border-dashed border-zinc-700 p-8 text-center">
           <p className="text-sm text-zinc-400">
-            No videos yet. Add posts on the Videos page to unlock charts.
+            No videos yet. Sync TikTok on the Videos page to unlock charts.
           </p>
           <Link
             href="/videos"

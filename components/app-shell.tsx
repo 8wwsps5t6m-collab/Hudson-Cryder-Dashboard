@@ -7,21 +7,16 @@ import * as LucideIcons from "lucide-react";
 import { mainNavItems } from "@/lib/nav-items";
 
 function isNavActive(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/";
-  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 const navIconNameByHref = {
-  "/": "Home",
+  "/calendar": "CalendarDays",
   "/analytics": "BarChart3",
   "/videos": "Video",
-  "/ideas": "Lightbulb",
   "/hooks": "Anchor",
   "/trends": "Sparkles",
   "/analyze": "Compass",
-  "/calendar": "CalendarDays",
 } as const;
 
 function getNavIcon(

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { HooksGenerator } from "@/components/hooks/hooks-generator";
+import { HookBank } from "@/components/hooks/hook-bank";
 
 export const metadata: Metadata = {
-  title: "Hooks",
+  title: "Hook Bank",
 };
 
 export default function HooksPage() {
-  return <HooksGenerator />;
+  return <HookBank />;
 }
